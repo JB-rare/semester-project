@@ -1,1 +1,1 @@
-https://www.kaggle.com/atulanandjha/imdb-50k-movie-reviews-test-your-bert
+http://ai.stanford.edu/~amaas/data/sentiment/index.html
