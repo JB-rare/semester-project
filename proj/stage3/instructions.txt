@@ -1,6 +1,0 @@
-Due: 20 Mar
-
-Add your proposed solution to your report, continue to refine your motivations and problem definition, 
-and update your report; Start to write code to do basic analysis or to get the data. 
-In your stage3 folder, put the updated report, code (if there is any), 
-small datasets (if created by you), or links to your large datasets. 
