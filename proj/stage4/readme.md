@@ -7,6 +7,7 @@ Updated Naive Bayes results on 1250 dataset, adding stop words and bigrams
 * updated project_mnb.py file posted
 * Project_mnb_results.docx file posted with intermediate and alternate results
 * mnb_roc_curve.png posted
+* imdb_stop_words.data file added based on initial analysis
 
 Initial Naive Bayes results based on 1250 dataset
 * Train accuracy: 0.966, Test accuracy: 0.802 
