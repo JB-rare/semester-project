@@ -1,5 +1,14 @@
 ## Status
 
+Initial Multi-Layer Perceptron Neural Net Model Results based on 5k dataset
+* Train Accuracy: 0.980, Test Accuracy: 0.855
+* Train f1: 0.980, Test f1: 0.855
+* ROC_AUC: 0.855
+* updated project_mlp.py file posted
+* Project_mlp_neural_network_results.docx file posted with intermediate and alternate results
+
+Added 5k test/train datasets
+
 Updated Naive Bayes results on 1250 dataset, adding stop words and bigrams
 * Train Accuracy: 0.990, Test Accuracy: 0.843
 * Train f1: 0.990, Test f1: 0.833
