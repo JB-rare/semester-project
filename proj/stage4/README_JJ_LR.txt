@@ -1,5 +1,5 @@
 CMD: Change directory path to the folder that contains these files:
-    * main_LR_IMDB.py
+    * main_LR_hypertun.py
     * README_JJ_LR.txt
 
 There are 11 optional arguments:
@@ -18,15 +18,15 @@ There are 11 optional arguments:
 
 Sample CMD input:
 
-python main_LR_IMDB.py
-python main_LR_IMDB.py -trz 5000
-python main_LR_IMDB.py -trz 5000 -tsz 500
-python main_LR_IMDB.py -trz 5000 -sp 0.3
-python main_LR_IMDB.py -uz unzip
-python main_LR_IMDB.py -ngn 2 -ngx 3
-python main_LR_IMDB.py -mi 7600
-python main_LR_IMDB.py -sv saga
-python main_LR_IMDB.py -cv 10
-python main_LR_IMDB.py -j 4
+python main_LR_hypertun.py
+python main_LR_hypertun.py -trz 5000
+python main_LR_hypertun.py -trz 5000 -tsz 500
+python main_LR_hypertun.py -trz 5000 -sp 0.3
+python main_LR_hypertun.py -uz unzip
+python main_LR_hypertun.py -ngn 2 -ngx 3
+python main_LR_hypertun.py -mi 7600
+python main_LR_hypertun.py -sv saga
+python main_LR_hypertun.py -cv 10
+python main_LR_hypertun.py -j 4
 
-pythong main_LR_IMDB.py -trz 5000 -sp 0.35 -uz no -ngn 1 -ngx 2 -mi 1000 -sv saga -cv 10 -j 8
+python main_LR_IMDB.py -trz 5000 -sp 0.35 -uz no -ngn 1 -ngx 2 -mi 1000 -sv saga -cv 10 -j 8
