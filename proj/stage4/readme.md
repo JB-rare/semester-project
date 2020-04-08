@@ -1,5 +1,12 @@
 ## Status
 
+Revised version of project report posted to respond to TA comments and add current state of play
+
+TA grading comments from stages 2 and 3 posted as "TA Grading Comments.txt"
+
+Initial Logistic Regression classifier complete
+* Test accuracy/f1: 0.866
+
 Initial Multi-Layer Perceptron Neural Net Model Results based on 5k dataset
 * Train Accuracy: 0.980, Test Accuracy: 0.855
 * Train f1: 0.980, Test f1: 0.855
@@ -22,11 +29,9 @@ Initial Naive Bayes results based on 1250 dataset
 * Train accuracy: 0.966, Test accuracy: 0.802 
 * project_mnb.py file posted 
 
-Final stage 3 report posted as stage 4 v1
-
 Initial algorithm exploration:
-* Bill - Naive Bayes -- first attempt complete
+* Bill - Naive Bayes, MLP 
 * Jay - Logistic Regression
-* Frank - TF/IDF
+* Frank - SVM
 
 Files from stage 3 copied to here
