@@ -5,7 +5,7 @@ Final Stage 4 report posted: Project Report for Stage 4-v3.docx
 Files rearranged into sub-directories for ease of review:
 * Datasets: 1250 and 5k IMDB subsets, IMDB stop words, dataset description, full dataset URL
 * Code: python code for preprocessing, existing classifiers (Logistic Regression, Multinomial Naive Bayes, Multi-layer Perceptron, SVM), etc.
-* Charts_results: Initial charts, result summaires, etc. 
+* Charts_results: Initial charts, result summaries, etc. 
 * Batch_instructions_files: batch and readme files for running code
 
 Initial SVM classifier complete
