@@ -1,5 +1,14 @@
 ## Status
 
+## On to Stage 5!
+
+Random Forest Classifier complete
+* Test accuracy / f1 / ROC_AUC = 0.83 / 0.83 / 0.83
+* project_rf.py file posted to /stage5/code directory
+* ROC curve posted to /charts directory
+
+Stage 4 files copied to stage 5 directory
+
 Final Stage 4 report posted: Project Report for Stage 4-v3.docx
 
 Files rearranged into sub-directories for ease of review:
@@ -17,16 +26,12 @@ Initial Logistic Regression classifier complete
 * project_LR.py file posted
 
 Initial Multi-Layer Perceptron Neural Net Model Results based on 5k dataset
-* Train Accuracy: 0.980, Test Accuracy: 0.855
-* Train f1: 0.980, Test f1: 0.855
-* ROC_AUC: 0.855
+* Test Accuracy / f1 / ROC_AUC: 0.86 / 0.86 / 0.86
 * updated project_mlp.py file posted
 * Project_mlp_neural_network_results.docx file posted with intermediate and alternate results
 
 Naive Bayes results on 1250 dataset, adding stop words and bigrams
-* Train Accuracy: 0.990, Test Accuracy: 0.843
-* Train f1: 0.990, Test f1: 0.833
-* ROC_AUC: 0.844
+* Test Accuracy / f1 /ROC_AUC: 0.84 / 0.83 / 0.84
 * updated project_mnb.py file posted
 * Project_mnb_results.docx file posted with intermediate and alternate results
 * mnb_roc_curve.png posted
