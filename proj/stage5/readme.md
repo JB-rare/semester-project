@@ -1,6 +1,6 @@
 ## Status
 
-## On to Stage 5!
+## Heading for the Finish!
 
 Tested voting classifier on results from RF, MNB, and MLP (All had test accuracy = 0.85)
 * simple majority vote on the 3 classifiers increased accuracy to 0.87
