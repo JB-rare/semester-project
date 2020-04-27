@@ -2,9 +2,13 @@
 
 ## On to Stage 5!
 
+Tested voting classifier on results from RF, MNB, and MLP (All had test accuracy = 0.85)
+* simple majority vote on the 3 classifiers increased accuracy to 0.87
+* posted proj_voting.py file to code directory
+
 Random Forest Classifier updated!  Better score!
 * Test accuracy / f1 / ROC_AUC = improved from 0.83 to 0.85
-* revised project_rf.py file posted to /stage5/code directory
+* revised proj_rf.py file posted to /stage5/code directory
 * Revised ROC curve posted to /charts directory -- area under curve = 0.92
 
 Stage 4 files copied to stage 5 directory
