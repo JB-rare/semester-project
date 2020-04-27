@@ -2,10 +2,10 @@
 
 ## On to Stage 5!
 
-Random Forest Classifier complete
-* Test accuracy / f1 / ROC_AUC = 0.83 / 0.83 / 0.83
-* project_rf.py file posted to /stage5/code directory
-* ROC curve posted to /charts directory
+Random Forest Classifier updated!  Better score!
+* Test accuracy / f1 / ROC_AUC = improved from 0.83 to 0.85
+* revised project_rf.py file posted to /stage5/code directory
+* Revised ROC curve posted to /charts directory -- area under curve = 0.92
 
 Stage 4 files copied to stage 5 directory
 
