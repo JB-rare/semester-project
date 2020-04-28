@@ -73,7 +73,7 @@ if algo not in algos:
 ## Read the appropriate datafiles 
 
 if algo != 'vote':
-    filename_X = algo + '_vectors'
+    filename_X = algo + '_vectors.npz'
     in_X = np.load(filename_X, allow_pickle=True)
     # get train and test vectors
     X_train = in_X['train_vec']
@@ -104,10 +104,11 @@ else:
 
 # read in y (target) values
 
-filename_y = 'some filename'
+filename_y = 'IMDB_5k_y.npz'
+# filename_y = 'IMDB_y.npz'
 in_y = np.load(filename_y, allow_pickle=True)
-y_train = in_y['something']
-y_test = in_y['something']
+y_train = in_y['y_train']
+y_test = in_y['y_test']
 
 #%%
 #
