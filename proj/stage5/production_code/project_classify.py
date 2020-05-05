@@ -4,14 +4,14 @@ Project_classify.py
 CS 487, Spring 2020
 Semester project
 28 Apr 2020
-Author: Bill Hanson
+Authors: Los Ancianos: Bill Hanson, Jay Johnston, Frank Macha
 @billhnm
 version 2.0
 
-This is the main program for reading in the trained vectors,
+This is the main program for reading in the trained vectors, 
     running them through the appropriate classification module,
     writing predictions to disk,
-    and reporting results.
+    and reporting results.  
 
 """
 #%%
@@ -20,7 +20,7 @@ This is the main program for reading in the trained vectors,
 import os
 import re
 import sys
-import argparse
+import argparse 
 import pandas as pd
 import numpy as np
 from sklearn.metrics import accuracy_score
@@ -29,6 +29,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import roc_curve, roc_auc_score, auc
+from scipy import sparse
 # add imports as needed, but they should be in your programs
 
 #
@@ -43,12 +44,15 @@ from sklearn.metrics import roc_curve, roc_auc_score, auc
 # initialize variables
 random_state = 42
 params = [None] * 4
-
+algo = 'mnb'
 #
+#%%
+#
+'''
 # read the algorithm and parameters specified in the command line (comment out for development)
-# NOTE: assumes files are the two full IMDB sets
+# NOTE: assumes files are the two full IMDB sets  
 
-# NOTE (Question): do we need to add an argument for a separate stopwords file?
+# NOTE (Question): do we need to add an argument for a separate stopwords file? 
 parser = argparse.ArgumentParser()
 parser.add_argument('algo')
 parser.add_argument('params', default=None, nargs='*')
@@ -65,19 +69,27 @@ algo = algo.lower()
 # test for correct algorithm input (ignore capitalization issues)
 if algo not in algos:
     print('Your algorithm,', algo, 'is not recognized.')
-    print('Please make sure you specify one of the following algorithms:',
+    print('Please make sure you specify one of the following algorithms:',  
     'LR, MNB, MLP, RF, SVM, VOTE.')
     sys.exit('Incorrect algorithm specified, terminating.')
-#%%
+
+'''
 #
-## Read the appropriate datafiles
+#%%
+# 
+## Read the appropriate datafiles 
 
 if algo != 'vote':
-    filename_X = algo + '_vectors.npz'
-    in_X = np.load(filename_X, allow_pickle=True)
-    # get train and test vectors
-    X_train = in_X['train_vec']
-    X_test = in_X['test_vec']
+    if algo == 'mnb':
+        # mnb requires sparse matrices - saved differently
+        X_train = sparse.load_npz('mnb_train_vec.npz')
+        X_test = sparse.load_npz('mnb_test_vec.npz')
+    else:
+        filename_X = algo + '_vectors.npz'
+        in_X = np.load(filename_X, allow_pickle=True)
+        # get train and test vectors
+        X_train = in_X['train_vec']
+        X_test = in_X['test_vec']
 elif algo == 'vote':
     # if we're voting, read in all the various predictions
     in_lr = np.load('lr_preds', allow_pickle=True)
@@ -110,6 +122,7 @@ in_y = np.load(filename_y, allow_pickle=True)
 y_train = in_y['y_train']
 y_test = in_y['y_test']
 
+
 #%%
 #
 ## Figure out which preproc tool to run based on 'algo'
@@ -125,8 +138,6 @@ if algo == 'lr':
     # str_param = params[1]
     solver_ = 'liblinear'
     # flt_param = float(parmam[2])
-
-    pass
 elif algo == 'mnb':
     # int_param = int(params[0])
     # str_param = params[1]
@@ -148,7 +159,6 @@ elif algo == 'svm':
     # flt_param = float(parmam[2])
     svm_kernel = linear   # linear or rbf
     svm_gamma = 0.1   # some float
-    pass
 elif algo == 'vote':
     # int_param = int(params[0])
     # str_param = params[1]
@@ -156,7 +166,7 @@ elif algo == 'vote':
     pass
 
 # Set parameters for testing purposes
-#
+# 
 # comment out for turn-in
 '''
 algo = 'lr'
@@ -168,36 +178,36 @@ algo = 'lr'
 #
 #   Call program module and function
 #   Pass X_train and X_test
-#   Return predictions for train and test
+#   Return predictions for train and test  
 
 if algo == 'lr':
     # call the external module and function
-    from project_LR import lr_classify
-    lr_train_preds, lr_test_preds = lr_classify(X_train, y_train, lr_train_vec, lr_test_vec, max_iter_, solver_, random_state_) # add parameters as needed
+    from proj_lr import lr_classify
+    lr_train_preds, lr_test_preds = lr_classify(X_train, X_test) # add parameters as needed
     ## save test and training predictions in .npz format
     np.savez('lr_preds', train_preds = lr_train_preds, test_preds = lr_test_preds)
 elif algo == 'mnb':
     # call the external module and function
-    from proj_mnb import mnb_classify
-    mnb_train_preds, mnb_test_preds = mnb_classify(X_train, X_test) # add parameters as needed
+    from project_mnb import mnb_classify
+    mnb_train_preds, mnb_test_preds = mnb_classify(X_train, X_test, y_train) # add parameters as needed
     ## save test and training predictions in .npz format
     np.savez('mnb_preds', train_preds = mnb_train_preds, test_preds = mnb_test_preds)
 elif algo == 'mlp':
     # call the external module and function
-    from proj_mlp import mlp_classify
-    mlp_train_preds, mlp_test_preds = mlp_classify(X_train, X_test) # add parameters as needed
+    from project_mlp import mlp_classify
+    mlp_train_preds, mlp_test_preds = mlp_classify(X_train, X_test, y_train, y_test) # add parameters as needed
     ## save test and training predictions in .npz format
     np.savez('mlp_preds', train_preds = mlp_train_preds, test_preds = mlp_test_preds)
 elif algo == 'rf':
     # call the external module and function
-    from proj_rf import rf_classify
-    rf_train_preds, rf_test_preds = rf_classify(X_train, X_test) # add parameters as needed
+    from project_rf import rf_classify
+    rf_train_preds, rf_test_preds = rf_classify(X_train, X_test, y_train) # add parameters as needed
     ## save test and training predictions in .npz format
     np.savez('rf_preds', train_preds = rf_train_preds, test_preds = rf_test_preds)
 elif algo == 'svm':
     # call the external module and function
-    from project_svm import svm_classify
-    svm_train_preds, svm_test_preds = svm_classify(X_train, X_test, y_train, y_test, svm_kernel, svm_gamma) # add parameters as needed
+    from proj_svm import svm_classify
+    svm_train_preds, svm_test_preds = svm_classify(X_train, X_test) # add parameters as needed
     ## save test and training predictions in .npz format
     np.savez('svm_preds', train_preds = svm_train_preds, test_preds = svm_test_preds)
 elif algo == 'vote':
@@ -219,6 +229,8 @@ if algo != 'vote':
 #%%
 #
 ## Report the results
+train_preds = mnb_train_preds
+test_preds = mnb_test_preds
 
 print('Train Accuracy:', accuracy_score(y_train, train_preds))
 print('Test Accuracy:', accuracy_score(y_test, test_preds))
