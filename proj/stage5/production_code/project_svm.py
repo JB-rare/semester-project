@@ -68,13 +68,6 @@ from sklearn.svm import SVC
 ## Define needed functions
 #
 
-def split_data(df):
-    # splits last column (tgt - classification labels) from data into a new df
-    nf = df.shape[1] - 1
-    tgt = df.iloc[:, -1].values
-    feats = df.iloc[:, 0:nf].values
-    return tgt, feats
-
 # init stemmer
 porter_stemmer=PorterStemmer()
 
@@ -123,6 +116,41 @@ def clean_text(text):
     text = " ".join(text)
     return(text)
 
+
+def clean_df(frame):
+
+    # assuming frame is single column
+
+    string_array = frame.to_numpy()
+    new_string_array = []
+
+    for entry in range(0,len(string_array)):
+
+        old_string = string_array[entry]
+
+        # Remove all the special characters
+        clean_string = re.sub(r'\W', ' ', str(old_string))
+
+        # remove all single characters
+        clean_string = re.sub(r'\s+[a-zA-Z]\s+', ' ', clean_string)
+
+        # Remove single characters from the start
+        clean_string = re.sub(r'\^[a-zA-Z]\s+', ' ', clean_string)
+
+        # Substituting multiple spaces with single space
+        clean_string = re.sub(r'\s+', ' ', clean_string, flags=re.I)
+
+        # Removing prefixed 'b'
+        clean_string = re.sub(r'^b\s+', '', clean_string)
+
+        # Converting to Lowercase
+        new_string = X_processed_entry.lower()
+
+        new_string_array.append(new_string)
+
+    return new_string_array
+
+
 #%%
 #
 ## functions called from project_preproc or project_classify
@@ -130,18 +158,20 @@ def clean_text(text):
 def svm_preproc(X_train, X_test):
 
     # all preprocessing code here
+
+    X_train_clean = clean_df(X_train)
+    X_test_clearn = clean_df(X_test)
+
     nltk.download('stopwords')
 
     vectorizer = TfidfVectorizer (max_features=2500, min_df=7, max_df=0.8, stop_words=stopwords.words('english'))
-    train_vec = vectorizer.fit_transform(X_train[0])
-    test_vec = vectorize.transform(X_test[0])
+    X_train_vec = vectorizer.fit_transform(X_train_clean).toarray()
+    X_test_vec = vectorize.fit_transform(X_test_clean).toarray()
 
-    return train_vec, test_vec
+    return X_train_vec, X_test_vec
 
-def svm_classify(X_train, X_test, train_vec, test_vec, tun_kernel, tun_gamma ):
+def svm_classify(X_train, X_test, y_train, y_test, tun_kernel, tun_gamma ):
     # all classification code here
-
-    X_train, y_train, train_vec, test_vec, max_iter_=7800, solver_='lbfgs', random_state_=1
 
     sc = StandardScaler()
     sc.fit(X_train)
@@ -165,4 +195,4 @@ def svm_classify(X_train, X_test, train_vec, test_vec, tun_kernel, tun_gamma ):
     svm_train = accuracy_score(y_train, y_train_pred)
     svm_test = accuracy_score(y_test, y_test_pred)
 
-    return train_preds, test_preds
+    return svm_train, svm_test
