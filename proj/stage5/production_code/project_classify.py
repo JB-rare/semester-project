@@ -172,8 +172,6 @@ algo = 'lr'
 
 if algo == 'lr':
     # call the external module and function
-    from project_LR import lr_preproc
-    lr_train_vec, lr_test_vec = lr_preproc(X_train, X_test)
     from project_LR import lr_classify
     lr_train_preds, lr_test_preds = lr_classify(X_train, y_train, lr_train_vec, lr_test_vec, max_iter_, solver_, random_state_) # add parameters as needed
     ## save test and training predictions in .npz format

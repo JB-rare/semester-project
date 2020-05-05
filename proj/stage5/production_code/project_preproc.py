@@ -174,7 +174,7 @@ stopwords = imdb_stop_words
 
 if algo == 'lr':
     # call the external module and function
-    from proj_lr import lr_preproc
+    from project_LR import lr_preproc
     lr_train_vec, lr_test_vec = lr_preproc(X_train, X_test) # add parameters as needed
     ## save test and training vectors in .npz format
     np.savez('lr_vectors', train_vec = lr_train_vec, test_vec = lr_test_vec)
