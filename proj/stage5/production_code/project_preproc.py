@@ -21,6 +21,7 @@ import sys
 import argparse 
 import pandas as pd
 import numpy as np
+import scipy.sparse
 # add imports as needed, but they should be in your programs
 
 #
@@ -43,13 +44,17 @@ def join_data(df, y):
     return df_new
 
 #
-#%%
+
 ## Inputs algorithm, filename and up to four parameters
 
 # initialize variables
 random_state = 42
 params = [None] * 4
+algo = 'mnb'
 
+#%%
+#
+'''
 #
 # read the algorithm and parameters specified in the command line (comment out for development)
 # NOTE: assumes files are the two full IMDB sets  
@@ -74,6 +79,9 @@ if algo not in algos:
     print('Please make sure you specify one of the following algorithms:',  
     'LR, MNB, MLP, RF, SVM, ALL.')
     sys.exit('Incorrect algorithm specified, terminating.')
+
+'''
+#
 #%%
 # 
 ## Read the IMDB datafile
@@ -172,20 +180,23 @@ if algo == 'lr':
     np.savez('lr_vectors', train_vec = lr_train_vec, test_vec = lr_test_vec)
 elif algo == 'mnb':
     # call the external module and function
-    from proj_mnb import mnb_preproc
+    from project_mnb import mnb_preproc
     mnb_train_vec, mnb_test_vec = mnb_preproc(X_train, X_test) # add parameters as needed
     ## save test and training vectors in .npz format
-    np.savez('mnb_vectors', train_vec = mnb_train_vec, test_vec = mnb_test_vec)
+    # note: have to save as sparse matrices (2 files)
+    sparse.save_npz('mnb_train_vec', mnb_train_vec)
+    sparse.save_npz('mnb_test_vec', mnb_test_vec)
+    # np.savez('mnb_vectors', train_vec = mnb_train_vec, test_vec = mnb_test_vec)
 elif algo == 'mlp':
     # call the external module and function
-    from proj_mlp import mlp_preproc
+    from project_mlp import mlp_preproc
     mlp_train_vec, mlp_test_vec = mlp_preproc(X_train, X_test) # add parameters as needed
     ## save test and training vectors in .npz format
     np.savez('mlp_vectors', train_vec = mlp_train_vec, test_vec = mlp_test_vec)
 elif algo == 'rf':
     # call the external module and function
-    from proj_rf import rf_preproc
-    rf_train_vec, rf_test_vec = rf_preproc(X_train, X_test) # add parameters as needed
+    from project_rf import rf_preproc
+    rf_train_vec, rf_test_vec = rf_preproc(train_raw, test_raw) # add parameters as needed
     ## save test and training vectors in .npz format
     np.savez('rf_vectors', train_vec = rf_train_vec, test_vec = rf_test_vec)
 elif algo == 'svm':
