@@ -30,6 +30,7 @@ from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 from scipy import sparse
+import scipy.sparse
 # add imports as needed, but they should be in your programs
 
 #
@@ -38,13 +39,13 @@ from scipy import sparse
 
 
 #
-#%%
+
 ## Inputs algorithm, filename and up to four parameters
 
 # initialize variables
 random_state = 42
 params = [None] * 4
-algo = 'mnb'
+algo = 'svm'
 #
 #%%
 #
@@ -84,6 +85,10 @@ if algo != 'vote':
         # mnb requires sparse matrices - saved differently
         X_train = sparse.load_npz('mnb_train_vec.npz')
         X_test = sparse.load_npz('mnb_test_vec.npz')
+    elif algo == 'lr':
+        # lr requires sparse matrices - saved differently
+        X_train = sparse.load_npz('mnb_train_vec.npz')
+        X_test = sparse.load_npz('mnb_test_vec.npz')        
     else:
         filename_X = algo + '_vectors.npz'
         in_X = np.load(filename_X, allow_pickle=True)
@@ -136,7 +141,8 @@ if algo == 'lr':
     max_iter_ = 7800
     random_state_ = 42
     # str_param = params[1]
-    solver_ = 'liblinear'
+    #solver_ = 'liblinear'
+    solver_ = 'lbfgs'
     # flt_param = float(parmam[2])
 elif algo == 'mnb':
     # int_param = int(params[0])
@@ -157,7 +163,7 @@ elif algo == 'svm':
     # int_param = int(params[0])
     # str_param = params[1]
     # flt_param = float(parmam[2])
-    svm_kernel = linear   # linear or rbf
+    svm_kernel = 'linear'   # linear or rbf
     svm_gamma = 0.1   # some float
 elif algo == 'vote':
     # int_param = int(params[0])
@@ -182,8 +188,9 @@ algo = 'lr'
 
 if algo == 'lr':
     # call the external module and function
-    from proj_lr import lr_classify
-    lr_train_preds, lr_test_preds = lr_classify(X_train, X_test) # add parameters as needed
+    from project_LR import lr_classify
+    lr_train_preds, lr_test_preds = lr_classify(y_train, 
+                    X_train, X_test) # add parameters as needed
     ## save test and training predictions in .npz format
     np.savez('lr_preds', train_preds = lr_train_preds, test_preds = lr_test_preds)
 elif algo == 'mnb':
@@ -206,8 +213,9 @@ elif algo == 'rf':
     np.savez('rf_preds', train_preds = rf_train_preds, test_preds = rf_test_preds)
 elif algo == 'svm':
     # call the external module and function
-    from proj_svm import svm_classify
-    svm_train_preds, svm_test_preds = svm_classify(X_train, X_test) # add parameters as needed
+    from project_svm import svm_classify
+    svm_train_preds, svm_test_preds = svm_classify(X_train, X_test, y_train,
+                        tun_kernel = svm_kernel, tun_gamma = svm_gamma) # add parameters as needed
     ## save test and training predictions in .npz format
     np.savez('svm_preds', train_preds = svm_train_preds, test_preds = svm_test_preds)
 elif algo == 'vote':
@@ -229,8 +237,8 @@ if algo != 'vote':
 #%%
 #
 ## Report the results
-train_preds = mnb_train_preds
-test_preds = mnb_test_preds
+train_preds = svm_train_preds
+test_preds = svm_test_preds
 
 print('Train Accuracy:', accuracy_score(y_train, train_preds))
 print('Test Accuracy:', accuracy_score(y_test, test_preds))

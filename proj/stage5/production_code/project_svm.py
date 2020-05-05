@@ -144,7 +144,8 @@ def clean_df(frame):
         clean_string = re.sub(r'^b\s+', '', clean_string)
 
         # Converting to Lowercase
-        new_string = X_processed_entry.lower()
+        # new_string = X_processed_entry.lower()  # X_processed_entry undefined
+        new_string = clean_string.lower()
 
         new_string_array.append(new_string)
 
@@ -159,18 +160,22 @@ def svm_preproc(X_train, X_test):
 
     # all preprocessing code here
 
-    X_train_clean = clean_df(X_train)
-    X_test_clearn = clean_df(X_test)
+    # turn to df
+    df_X_train = pd.DataFrame(data=X_train)
+    df_X_test = pd.DataFrame(data=X_test)
+
+    X_train_clean = clean_df(df_X_train)
+    X_test_clean = clean_df(df_X_test)
 
     nltk.download('stopwords')
 
     vectorizer = TfidfVectorizer (max_features=2500, min_df=7, max_df=0.8, stop_words=stopwords.words('english'))
     X_train_vec = vectorizer.fit_transform(X_train_clean).toarray()
-    X_test_vec = vectorize.fit_transform(X_test_clean).toarray()
+    X_test_vec = vectorizer.fit_transform(X_test_clean).toarray()
 
     return X_train_vec, X_test_vec
 
-def svm_classify(X_train, X_test, y_train, y_test, tun_kernel, tun_gamma ):
+def svm_classify(X_train, X_test, y_train, tun_kernel, tun_gamma):
     # all classification code here
 
     sc = StandardScaler()
@@ -184,15 +189,15 @@ def svm_classify(X_train, X_test, y_train, y_test, tun_kernel, tun_gamma ):
         svm = SVC(kernel=tun_kernel, C=1.0, random_state=1, gamma=tun_gamma)
 
     # run .fit - capture time
-    start_time=time.time()
+    # start_time=time.time()
     svm.fit(X_train, y_train)
-    run_time=time.time() - start_time
+    # run_time=time.time() - start_time
 
     y_train_pred = svm.predict(X_train)
     y_test_pred = svm.predict(X_test)
-    misclass = (y_test_pred != y_test).sum()
+    # misclass = (y_test_pred != y_test).sum()
 
-    svm_train = accuracy_score(y_train, y_train_pred)
-    svm_test = accuracy_score(y_test, y_test_pred)
+    #svm_train = accuracy_score(y_train, y_train_pred)
+    #svm_test = accuracy_score(y_test, y_test_pred)
 
-    return svm_train, svm_test
+    return y_train_pred, y_test_pred

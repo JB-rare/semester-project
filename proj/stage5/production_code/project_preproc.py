@@ -4,12 +4,12 @@ Project_preproc.py
 CS 487, Spring 2020
 Semester project
 28 Apr 2020
-Author: Bill Hanson
+Author: Los Ancianos - Bill Hanson, Jay Johnston and Frank Macha
 @billhnm
 version 2.0
 
 This is the main program for reading in the IMDB files, running appropriate
-    preprocessing, and then writes the train/test vectors to disk.
+    preprocessing, and then writes the train/test vectors to disk.  
 
 """
 #%%
@@ -18,9 +18,10 @@ This is the main program for reading in the IMDB files, running appropriate
 import os
 import re
 import sys
-import argparse
+import argparse 
 import pandas as pd
 import numpy as np
+from scipy import sparse
 import scipy.sparse
 # add imports as needed, but they should be in your programs
 
@@ -38,7 +39,7 @@ def split_data(df):
 def join_data(df, y):
     # adds classification labels back to the last column
     df_new = df.copy()
-    df_new = pd.DataFrame(df_new)
+    df_new = pd.DataFrame(df_new) 
     col = df_new.shape[1]
     df_new[col] = y
     return df_new
@@ -50,16 +51,16 @@ def join_data(df, y):
 # initialize variables
 random_state = 42
 params = [None] * 4
-algo = 'mnb'
+algo = 'svm'
 
 #%%
 #
 '''
 #
 # read the algorithm and parameters specified in the command line (comment out for development)
-# NOTE: assumes files are the two full IMDB sets
+# NOTE: assumes files are the two full IMDB sets  
 
-# NOTE (Question): do we need to add an argument for a separate stopwords file?
+# NOTE (Question): do we need to add an argument for a separate stopwords file? 
 parser = argparse.ArgumentParser()
 parser.add_argument('algo')
 parser.add_argument('params', default=None, nargs='*')
@@ -76,14 +77,14 @@ algo = algo.lower()
 # test for correct algorithm input (ignore capitalization issues)
 if algo not in algos:
     print('Your algorithm,', algo, 'is not recognized.')
-    print('Please make sure you specify one of the following algorithms:',
+    print('Please make sure you specify one of the following algorithms:',  
     'LR, MNB, MLP, RF, SVM, ALL.')
     sys.exit('Incorrect algorithm specified, terminating.')
 
 '''
 #
 #%%
-#
+# 
 ## Read the IMDB datafile
 
 # trainfile = 'IMDBtrain.csv'
@@ -96,16 +97,16 @@ test_raw = pd.read_csv(testfile, header = None)
 
 ## Read stop_words files - depending on preprocessing
 #
-stopfile = 'imdb_stop_words.data'
+stopfile = 'imdb_stop_words.data' 
 # imdb_stop_words = pd.read_csv(stopfile, header = None)
 # create a set from the df
 # imdb_stop_words = set(imdb_stop_words[0])
 
-## IMPORTANT NOTE:
-##         Original datafiles had reviews coded as 'pos' and 'neg'
+## IMPORTANT NOTE: 
+##         Original datafiles had reviews coded as 'pos' and 'neg' 
 ##          Changed to [1, -1] via search/replace prior to reading in to
 ##          this program
-## Shared directory for files:
+## Shared directory for files: 
 ##       https://1drv.ms/u/s!BGTJZxAGTMBHlt1AfjhjYzM88cdxDw?e=Q8t1Bx
 
 ## split test/train
@@ -170,14 +171,17 @@ stopwords = imdb_stop_words
 #
 #   Call program module and function
 #   Pass X_train and X_test
-#   Return preprocessed vectors train and test
+#   Return preprocessed vectors train and test  
 
 if algo == 'lr':
     # call the external module and function
     from project_LR import lr_preproc
     lr_train_vec, lr_test_vec = lr_preproc(X_train, X_test) # add parameters as needed
     ## save test and training vectors in .npz format
-    np.savez('lr_vectors', train_vec = lr_train_vec, test_vec = lr_test_vec)
+    # note: have to save as sparse matrices (2 files)
+    sparse.save_npz('lr_train_vec', lr_train_vec)
+    sparse.save_npz('lr_test_vec', lr_test_vec)
+    #np.savez('lr_vectors', train_vec = lr_train_vec, test_vec = lr_test_vec)
 elif algo == 'mnb':
     # call the external module and function
     from project_mnb import mnb_preproc
