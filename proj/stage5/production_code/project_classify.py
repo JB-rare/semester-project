@@ -120,8 +120,12 @@ y_test = in_y['y_test']
 
 if algo == 'lr':
     # int_param = int(params[0])
+    max_iter_ = 7800
+    random_state_ = 42
     # str_param = params[1]
+    solver_ = 'liblinear'
     # flt_param = float(parmam[2])
+    
     pass
 elif algo == 'mnb':
     # int_param = int(params[0])
@@ -165,9 +169,11 @@ algo = 'lr'
 #   Return predictions for train and test  
 
 if algo == 'lr':
-    # call the external module and function
-    from proj_lr import lr_classify
-    lr_train_preds, lr_test_preds = lr_classify(X_train, X_test) # add parameters as needed
+    # call the external module and function    
+    from project_LR import lr_preproc
+    lr_train_vec, lr_test_vec = lr_preproc(X_train, X_test)
+    from project_LR import lr_classify
+    lr_train_preds, lr_test_preds = lr_classify(X_train, y_train, lr_train_vec, lr_test_vec, max_iter_, solver_, random_state_) # add parameters as needed
     ## save test and training predictions in .npz format
     np.savez('lr_preds', train_preds = lr_train_preds, test_preds = lr_test_preds)
 elif algo == 'mnb':
