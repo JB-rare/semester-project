@@ -6,7 +6,7 @@ Semester project
 28 Apr 2020
 Author: Los Ancianos - Bill Hanson, Jay Johnston and Frank Macha
 @billhnm
-version 2.0
+version 2.5
 
 This is the main program for reading in the IMDB files, running appropriate
     preprocessing, and then writes the train/test vectors to disk.  
@@ -23,6 +23,7 @@ import pandas as pd
 import numpy as np
 from scipy import sparse
 import scipy.sparse
+from time import perf_counter
 # add imports as needed, but they should be in your programs
 
 #
@@ -36,21 +37,11 @@ def split_data(df):
     feats = df.iloc[:, 0:nf].values
     return tgt, feats
 
-def join_data(df, y):
-    # adds classification labels back to the last column
-    df_new = df.copy()
-    df_new = pd.DataFrame(df_new) 
-    col = df_new.shape[1]
-    df_new[col] = y
-    return df_new
-
-#
 
 ## Inputs algorithm, filename and up to four parameters
 
 # initialize variables
 random_state = 42
-params = [None] * 4
 algo = 'svm'
 
 #%%
@@ -60,7 +51,7 @@ algo = 'svm'
 # read the algorithm and parameters specified in the command line (comment out for development)
 # NOTE: assumes files are the two full IMDB sets  
 
-# NOTE (Question): do we need to add an argument for a separate stopwords file? 
+# 
 parser = argparse.ArgumentParser()
 parser.add_argument('algo')
 parser.add_argument('params', default=None, nargs='*')
@@ -87,13 +78,17 @@ if algo not in algos:
 # 
 ## Read the IMDB datafile
 
-# trainfile = 'IMDBtrain.csv'
-# testfile = 'IMDBtest.csv'
-trainfile = 'IMDB_5k_train.data'
-testfile = 'IMDB_5k_test.data'
+trainfile = 'IMDBtrain.csv'
+testfile = 'IMDBtest.csv'
+#trainfile = 'IMDB_5k_train.data'
+#testfile = 'IMDB_5k_test.data'
 
 train_raw = pd.read_csv(trainfile, header = None) # read data file
 test_raw = pd.read_csv(testfile, header = None)
+
+# batch if needed -- try 12.5k
+#train_raw = train_raw.iloc[12500:,:]
+#test_raw = test_raw.iloc[12500:,:]
 
 ## Read stop_words files - depending on preprocessing
 #
@@ -119,59 +114,21 @@ y_test, X_test = split_data(test_raw)
 df_X_train = pd.DataFrame(data=X_train)
 df_X_test = pd.DataFrame(data=X_test)
 
-#%%
 #
 ## Figure out which preproc tool to run based on 'algo'
 #
 
 # assign hyperparameter variables based on algorithm
-# comment out for testing
 
-if algo == 'lr':
-    # int_param = int(params[0])
-    # str_param = params[1]
-    # flt_param = float(parmam[2])
-    pass
-elif algo == 'mnb':
-    # int_param = int(params[0])
-    # str_param = params[1]
-    # flt_param = float(parmam[2])
-    pass
-elif algo == 'mlp':
-    # int_param = int(params[0])
-    # str_param = params[1]
-    # flt_param = float(parmam[2])
-    pass
-elif algo == 'rf':
-    # int_param = int(params[0])
-    # str_param = params[1]
-    # flt_param = float(parmam[2])
-    pass
-elif algo == 'svm':
-    # int_param = int(params[0])
-    # str_param = params[1]
-    # flt_param = float(parmam[2])
-    pass
-elif algo == 'all':
-    # int_param = int(params[0])
-    # str_param = params[1]
-    # flt_param = float(parmam[2])
-    pass
-
-# Set parameters for testing purposes
-# ['k-means', 'sp-hierarchical', 'sk-hierarchical', 'dbscan']
-# comment out for turn-in
-'''
-algo = 'lr'
-stopwords = imdb_stop_words
-
-'''
+## eliminated since nobody has hyperparameters for preproc
 
 ## select module to call based on algo
 #
 #   Call program module and function
 #   Pass X_train and X_test
 #   Return preprocessed vectors train and test  
+
+t1_start = perf_counter()
 
 if algo == 'lr':
     # call the external module and function
@@ -216,6 +173,10 @@ else:
     print('Nothing done: something went wrong')# error out
     print('Check your premises')
 
+t1_stop = perf_counter()
+run_time = t1_stop - t1_start
+
+print('Run Time = %5.1f' %run_time)
 print('All done!')
 #
 #%%

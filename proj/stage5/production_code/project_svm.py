@@ -51,105 +51,45 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import roc_curve, roc_auc_score, auc
-from nltk.stem import PorterStemmer
-from nltk.corpus import wordnet
-from nltk import pos_tag
-from nltk.corpus import stopwords
-from nltk.tokenize import WhitespaceTokenizer
-from nltk.stem import WordNetLemmatizer
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from gensim.test.utils import common_texts
-from gensim.models.doc2vec import Doc2Vec, TaggedDocument
-
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+from nltk.corpus import stopwords
 
 #
 ## Define needed functions
 #
 
-# init stemmer
-porter_stemmer=PorterStemmer()
-
-def my_preprocessor(text):
-    # pre-process to remove special chars, lower-case, normalize and stem
-    text=text.lower()
-    text=re.sub("\\W"," ",text) # remove special chars
-    text=re.sub("\\s+(in|the|all|for|and|on)\\s+"," _connector_ ",text) # normalize certain words
-
-    # stem words
-    words=re.split("\\s+",text)
-    stemmed_words=[porter_stemmer.stem(word=word) for word in words]
-    return ' '.join(stemmed_words)
-
-def get_wordnet_pos(pos_tag):
-    if pos_tag.startswith('J'):
-        return wordnet.ADJ
-    elif pos_tag.startswith('V'):
-        return wordnet.VERB
-    elif pos_tag.startswith('N'):
-        return wordnet.NOUN
-    elif pos_tag.startswith('R'):
-        return wordnet.ADV
-    else:
-        return wordnet.NOUN
-
-def clean_text(text):
-    # lower text
-    text = text.lower()
-    # tokenize text and remove puncutation
-    text = [word.strip(string.punctuation) for word in text.split(" ")]
-    # remove words that contain numbers
-    text = [word for word in text if not any(c.isdigit() for c in word)]
-    # remove stop words
-    stop = stopwords.words('english')
-    text = [x for x in text if x not in stop]
-    # remove empty tokens
-    text = [t for t in text if len(t) > 0]
-    # pos tag text
-    pos_tags = pos_tag(text)
-    # lemmatize text
-    text = [WordNetLemmatizer().lemmatize(t[0], get_wordnet_pos(t[1])) for t in pos_tags]
-    # remove words with only one letter
-    text = [t for t in text if len(t) > 1]
-    # join all
-    text = " ".join(text)
-    return(text)
 
 
-def clean_df(frame):
+
+def clean_data(X):
 
     # assuming frame is single column
 
-    string_array = frame.to_numpy()
-    new_string_array = []
+    X_processed_entries = []
 
-    for entry in range(0,len(string_array)):
-
-        old_string = string_array[entry]
-
+    for entry in range(0, len(X)):
         # Remove all the special characters
-        clean_string = re.sub(r'\W', ' ', str(old_string))
+        X_processed_entry = re.sub(r'\W', ' ', str(X[entry]))
 
         # remove all single characters
-        clean_string = re.sub(r'\s+[a-zA-Z]\s+', ' ', clean_string)
+        X_processed_entry= re.sub(r'\s+[a-zA-Z]\s+', ' ', X_processed_entry)
 
         # Remove single characters from the start
-        clean_string = re.sub(r'\^[a-zA-Z]\s+', ' ', clean_string)
+        X_processed_entry = re.sub(r'\^[a-zA-Z]\s+', ' ', X_processed_entry)
 
         # Substituting multiple spaces with single space
-        clean_string = re.sub(r'\s+', ' ', clean_string, flags=re.I)
+        X_processed_entry = re.sub(r'\s+', ' ', X_processed_entry, flags=re.I)
 
         # Removing prefixed 'b'
-        clean_string = re.sub(r'^b\s+', '', clean_string)
+        X_processed_entry = re.sub(r'^b\s+', '', X_processed_entry)
 
         # Converting to Lowercase
-        # new_string = X_processed_entry.lower()  # X_processed_entry undefined
-        new_string = clean_string.lower()
+        X_processed_entry = X_processed_entry.lower()
 
-        new_string_array.append(new_string)
+        X_processed_entries.append(X_processed_entry)
 
-    return new_string_array
+    return X_processed_entries
 
 
 #%%
@@ -160,18 +100,14 @@ def svm_preproc(X_train, X_test):
 
     # all preprocessing code here
 
-    # turn to df
-    df_X_train = pd.DataFrame(data=X_train)
-    df_X_test = pd.DataFrame(data=X_test)
+    X_train_clean = clean_data(X_train)
+    X_test_clean = clean_data(X_test)
 
-    X_train_clean = clean_df(df_X_train)
-    X_test_clean = clean_df(df_X_test)
+    nltk.download('stopwords', quiet=True)
 
-    nltk.download('stopwords')
-
-    vectorizer = TfidfVectorizer (max_features=2500, min_df=7, max_df=0.8, stop_words=stopwords.words('english'))
+    vectorizer = TfidfVectorizer(max_features=2500, min_df=7, max_df=0.8, stop_words=stopwords.words('english'))
     X_train_vec = vectorizer.fit_transform(X_train_clean).toarray()
-    X_test_vec = vectorizer.fit_transform(X_test_clean).toarray()
+    X_test_vec = vectorizer.transform(X_test_clean).toarray()
 
     return X_train_vec, X_test_vec
 
