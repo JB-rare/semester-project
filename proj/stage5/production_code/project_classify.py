@@ -33,35 +33,27 @@ from scipy import sparse
 import scipy.sparse
 from time import perf_counter
 # add imports as needed, but they should be in your programs
-
 #
 ## Define needed functions
-#
-
-
-#
 
 ## Inputs algorithm, filename and up to four parameters
 
 # initialize variables
 random_state = 42
-algo = 'vote'
 #
 #%%
 #
-'''
-# read the algorithm and parameters specified in the command line (comment out for development)
+
+# read the algorithm specified in the command line (comment out for development)
 # NOTE: assumes files are the two full IMDB sets  
 
-# NOTE (Question): do we need to add an argument for a separate stopwords file? 
+
 parser = argparse.ArgumentParser()
 parser.add_argument('algo')
-parser.add_argument('params', default=None, nargs='*')
 
 args = parser.parse_args()
 
 algo = args.algo
-params = args.params
 
 algos = ['lr', 'mnb', 'mlp', 'rf', 'svm', 'vote']
 
@@ -74,9 +66,7 @@ if algo not in algos:
     'LR, MNB, MLP, RF, SVM, VOTE.')
     sys.exit('Incorrect algorithm specified, terminating.')
 
-'''
-#
-#%%
+
 # 
 ## Read the appropriate datafiles 
 
@@ -142,8 +132,6 @@ in_y = np.load(filename_y, allow_pickle=True)
 y_train = in_y['y_train']
 y_test = in_y['y_test']
 
-
-#%%
 #
 ## Figure out which preproc tool to run based on 'algo'
 #
@@ -163,15 +151,6 @@ elif algo == 'svm':
     svm_kernel = 'rbf'   # linear or rbf
     svm_gamma = 1.0   # some float
 
-
-# Set parameters for testing purposes
-# 
-# comment out for turn-in
-'''
-algo = 'lr'
-
-
-'''
 
 ## select module to call based on algo
 #
@@ -232,6 +211,7 @@ run_time = t1_stop - t1_start
 
 # if we voted, then go to report the results, otherwise say goodbye and exit
 if algo != 'vote':
+    print('Run Time = %5.1f' %run_time)
     print('All done with classification run!')
     sys.exit()
 

@@ -38,15 +38,11 @@ def split_data(df):
     return tgt, feats
 
 
-## Inputs algorithm, filename and up to four parameters
+## Inputs algorithm,
 
 # initialize variables
 random_state = 42
-algo = 'svm'
 
-#%%
-#
-'''
 #
 # read the algorithm and parameters specified in the command line (comment out for development)
 # NOTE: assumes files are the two full IMDB sets  
@@ -54,14 +50,12 @@ algo = 'svm'
 # 
 parser = argparse.ArgumentParser()
 parser.add_argument('algo')
-parser.add_argument('params', default=None, nargs='*')
 
 args = parser.parse_args()
 
 algo = args.algo
-params = args.params
 
-algos = ['lr', 'mnb', 'mlp', 'rf', 'svm', 'all']
+algos = ['lr', 'mnb', 'mlp', 'rf', 'svm']
 
 algo = algo.lower()
 
@@ -69,12 +63,9 @@ algo = algo.lower()
 if algo not in algos:
     print('Your algorithm,', algo, 'is not recognized.')
     print('Please make sure you specify one of the following algorithms:',  
-    'LR, MNB, MLP, RF, SVM, ALL.')
+    'LR, MNB, MLP, RF, SVM.')
     sys.exit('Incorrect algorithm specified, terminating.')
 
-'''
-#
-#%%
 # 
 ## Read the IMDB datafile
 
@@ -109,6 +100,10 @@ stopfile = 'imdb_stop_words.data'
 y_train, X_train = split_data(train_raw)
 y_test, X_test = split_data(test_raw)
 
+# save y to disk
+
+np.savez('IMDB_y.npz', y_train = y_train, y_test = y_test)
+
 ## turn to df
 #
 df_X_train = pd.DataFrame(data=X_train)
@@ -116,11 +111,6 @@ df_X_test = pd.DataFrame(data=X_test)
 
 #
 ## Figure out which preproc tool to run based on 'algo'
-#
-
-# assign hyperparameter variables based on algorithm
-
-## eliminated since nobody has hyperparameters for preproc
 
 ## select module to call based on algo
 #
