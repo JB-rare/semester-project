@@ -4,7 +4,7 @@ Project_LR.py
 CS 487, Spring 2020
 Semester project
 16 Apr 2020
-Author: Bill Hanson
+Author: Jay Johnston
 @billhnm
 version 2.0
 
@@ -122,21 +122,38 @@ def clean_text(text):
 
 #%%
 #
+## initialize variables
+max_iter_ = None
+solver_ = None
+random_state = None
+penalty = None
+
+#
 ## functions called from project_preproc or project_classify
 # 
 def lr_preproc(X_train, X_test):
     # all preprocessing code here
     imdb_stop_words = pd.read_csv('imdb_stop_words_stem.data', header = None)
+    imdb_stop_words = set(imdb_stop_words[0]) # added to get in the right format H
+    # turn to df
+    df_X_train = pd.DataFrame(data=X_train)
+    df_X_test = pd.DataFrame(data=X_test)
+    # vectorize
     vectorizer = TfidfVectorizer(min_df=2, ngram_range=(1,2),
                     preprocessor=lr_preprocessor, stop_words=imdb_stop_words)
-    train_vec = vectorizer.fit_transform(X_train[0])
-    test_vec = vectorizer.transform(X_test[0])
+    train_vec = vectorizer.fit_transform(df_X_train[0])
+    test_vec = vectorizer.transform(df_X_test[0])
     return train_vec, test_vec
 
-def lr_classify(X_train, y_train, train_vec, test_vec, max_iter_=7800, solver_='lbfgs', random_state_=1):
+def lr_classify(y_train, train_vec, test_vec, penalty = 'none',
+                dual = False, tol = 1e-4, C = 1.0, fit_intercept = True,
+                intercept_scaling = 1, class_weight = None, 
+                random_state = 42, solver = 'lbfgs', max_iter = 7800):
     # all classification code here
-    lr = LogisticRegression(max_iter=max_iter_, solver=solver_, random_state=random_state_)
-    lr.fit(X_train, y_train)
+    lr = LogisticRegression(penalty, dual, tol, C, fit_intercept, 
+                        intercept_scaling, class_weight, random_state, 
+                        solver, max_iter)
+    lr.fit(train_vec, y_train)
     train_preds = lr.predict(train_vec)
     test_preds = lr.predict(test_vec)
     return train_preds, test_preds
