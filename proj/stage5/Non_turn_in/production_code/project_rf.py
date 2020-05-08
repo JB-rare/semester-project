@@ -215,4 +215,171 @@ def rf_classify(X_train_vec, X_test_vec, y_train):
     return train_preds, test_preds
 
 #%%
+#
+## Write current file to disk
+'''
+#
+df_raw.to_csv('df_raw_inter.data', header = True, index = False)
+
+#%%
+#
+## read the file in if needed
+df_raw = pd.read_csv('df_raw_inter.data', header = 0)
+
+#X_train, X_test, y_train, y_test = train_test_split(review_train_vec_df[features], 
+#                review_train_vec_df[label], test_size = 0.10, random_state = 42)
+
+#%%
+#
+
+
+print('Train Accuracy:', accuracy_score(y_train, train_preds))
+print('Test Accuracy:', accuracy_score(y_test, test_preds))
+print('Train f1 Score:', f1_score(y_train, train_preds))
+print('Test f1 Score:', f1_score(y_test, test_preds))
+print('ROC_AUC Score:', roc_auc_score(y_test, test_preds))
+print('Classification Report:\n', classification_report(y_test, test_preds))
+print('Confusion matrix:\n', confusion_matrix(y_test, test_preds))
+
+#%%
+# show feature importance
+feature_importances_df = pd.DataFrame({"feature": features, "importance": rf.feature_importances_}).sort_values("importance", ascending = False)
+feature_importances_df.head(20)
+
+#%%
+#
+## ROC curve
+
+y_pred = [x[1] for x in rf.predict_proba(X_test)]
+fpr, tpr, thresholds = roc_curve(y_test, y_pred, pos_label = 1)
+
+roc_auc = auc(fpr, tpr)
+
+plt.figure(1, figsize = (15, 10))
+lw = 2
+plt.plot(fpr, tpr, color='darkorange',
+         lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
+plt.plot([0, 1], [0, 1], lw=lw, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.0])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver operating characteristic - RF classifier')
+plt.legend(loc="lower right")
+plt.show()
+
+#%%
+#
+## print results and scores
+
+train_preds = rf.predict(X_train)
+test_preds = rf.predict(X_test)
+
+print('Train Accuracy:', accuracy_score(y_train, train_preds))
+print('Test Accuracy:', accuracy_score(y_test, test_preds))
+print('Train f1 Score:', f1_score(y_train, train_preds))
+print('Test f1 Score:', f1_score(y_test, test_preds))
+print('ROC_AUC Score:', roc_auc_score(y_test, test_preds))
+print('Classification Report:\n', classification_report(y_test, test_preds))
+print('Confusion matrix:\n', confusion_matrix(y_test, test_preds))
+
+#%%
+#
+df_test_preds = pd.DataFrame(data=test_preds)
+df_test_preds.to_csv('RF_test_preds.data', header = False, index = False)
+
+#%%
+#
+
+## turn to df
+df_X_train = pd.DataFrame(data=X_train)
+df_X_test = pd.DataFrame(data=X_test)
+
+
+#%%
+#
+### fancier version with stop words, n-grams, etc
+
+## Vectorize the data
+
+# (ngram_range=(1,2), stop_words=imdb_stop_words, preprocessor=my_preprocessor)
+vectorizer = TfidfVectorizer(min_df=2, ngram_range=(1,2),
+                preprocessor=my_preprocessor, stop_words=imdb_stop_words)
+train_vec = vectorizer.fit_transform(df_X_train[0])
+test_vec = vectorizer.transform(df_X_test[0])
+
+#%%
+## run through SVM
+
+from sklearn import svm
+
+svc = svm.SVC()
+svc.fit(X_train, y_train)
+train_preds = svc.predict(X_train)
+test_preds = svc.predict(X_test)
+
+print('SVM - pass 2')
+print('Train Accuracy:', accuracy_score(y_train, train_preds))
+print('Test Accuracy:', accuracy_score(y_test, test_preds))
+print('Train f1 Score:', f1_score(y_train, train_preds))
+print('Test f1 Score:', f1_score(y_test, test_preds))
+print('ROC_AUC Score:', roc_auc_score(y_test, test_preds))
+print('Classification Report:\n', classification_report(y_test, test_preds))
+print('Confusion matrix:\n', confusion_matrix(y_test, test_preds))
+
+#%%
+#
+## show roc_auc curve
+# predict probabilities
+svc_probs = svc.predict_proba(X_test)
+# separate for positive 
+svc_probs_p = svc_probs[:, 1]
+# calculate scores
+svc_p_auc = roc_auc_score(y_test, svc_probs_p)
+# calculate the roc curves
+p_fpr, p_tpr, _ = roc_curve(y_test, svc_probs_p)
+# plot the roc curve for the model
+plt.plot(p_fpr, p_tpr, linestyle='--', label='Positive Review')
+# plt.plot(n_fpr, n_tpr, marker='.', label='Negative Review')
+# axis labels
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+# show the legend
+plt.legend()
+# add the auc score in a text box
+auc_score = roc_auc_score(y_test, test_preds)
+plt.text(0.65, 0.2, ("AUC Score:", round(auc_score,3)))
+plt.title('Receiver operating characteristic - SVM classifier')
+# show the plot
+plt.show()
+#%%
+
+
+
+
+
+#%%
+#
+## create custom stop words with min_df and max_df 
+#   Ignores words occuring in very few reviews (lots of terms in neg 
+#       reviews that only occur a couple of times, so wont do this)
+#   Ignores words occuring in majority (>50% for now) of reviews
+
+# Create stop word list for terms occuring in >50% of reviews
+cv = CountVectorizer(max_df=.5, preprocessor=my_preprocessor)
+# cv = CountVectorizer(max_df=.5) #create non-stemmed version
+count_vector=cv.fit_transform(df_X_train[0])
+imdb_stop_words  = cv.stop_words_
+
+#%%
+#
+## write stop words to data
+#df_stop_words = pd.DataFrame(data=imdb_stop_words)
+#df_stop_words.to_csv('imdb_stop_words.data', header=False, index=False)
+
+#%%
+
+#
+#%%
 # Program End
+'''
